@@ -8,7 +8,7 @@ private:
     struct Line {
         ll m, c;
 
-        Line (ll _m, ll _c, int _id) : m(_m), c(_c) {}
+        Line (ll _m, ll _c) : m(_m), c(_c) {}
 
         ll pass(ll x) {
             return m * x + c;
