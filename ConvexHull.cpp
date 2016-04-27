@@ -26,7 +26,8 @@ private:
         return (X.c - Z.c) * (Y.m - X.m) <= (X.c - Y.c) * (Z.m - X.m);
     }
 public:
-    void push_line(Line l) {
+    void push_line(ll m, ll c) {
+        Line l = Line(m,c);
         while (irrelevant(l)) d.pop_back();
         d.push_back(l);
     }
