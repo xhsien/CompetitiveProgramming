@@ -44,7 +44,7 @@ int main() {
         if (d[i] == INF)
             puts("INF");
         else
-            printf( "%d\n", d[i] );
+            printf("%d\n",d[i]);
  
     return 0;
 }
