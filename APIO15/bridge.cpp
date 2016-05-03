@@ -71,7 +71,7 @@ int main() {
             minHeap.push(ii(p[i].se,1));
         }
 
-        val1[i] = 1LL * median * cnt1 - sum1 + sum2 - 1LL * median * cnt2;
+        val1[i] = 1LL * maxHeap.top().fi * cnt1 - sum1 + sum2 - 1LL * maxHeap.top().fi * cnt2;
     }
 
     // suffix
@@ -99,7 +99,7 @@ int main() {
             minHeap.push(ii(p[i].se,1));
         }
 
-        val2[i] = 1LL * median * cnt1 - sum1 + sum2 - 1LL * median * cnt2;
+        val2[i] = 1LL * maxHeap.top().fi * cnt1 - sum1 + sum2 - 1LL * maxHeap.top().fi * cnt2;
     }
 
     if (K == 1) {
