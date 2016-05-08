@@ -136,6 +136,50 @@ int query(int x, int y, int id = 1, int l = 0, int r = N) {         // query in 
     return combine(query(x,y,id<<1,l,mid), query(x,y,id<<1|1,mid,r));
 }
 
+/* --- Recursive Implementation with Lazy Propagation --- */
+
+int N;
+vector<int> v, t, lazy;
+
+int combine(int i, int j) {
+    return i + j;
+}
+
+void update(int id, int l, int r, int val) {      // increase interval [l..r) by val
+    lazy[id] += val;
+    t[id] += (r - l) * val;
+}
+
+void shift(int id, int l, int r) {                // pass information to children
+    int mid = (l + r) / 2;
+    update(id<<1  , l, mid, lazy[id]);
+    update(id<<1|1, mid, r, lazy[id]);
+    lazy[id] = 0;
+}
+
+void modify(int x, int y, int val, int id = 1, int l = 0, int r = N) {
+    if (x >= r || l >= y) return;
+    if (x <= l && r <= y) {
+        update(id, l, r, val);
+        return;
+    }
+
+    shift(id, l, r);
+    int mid = (l + r) / 2;
+    modify(x, y, val, id<<1  , l, mid);
+    modify(x, y, val, id<<1|1, mid, r);
+    t[id] = combine(t[id<<1], t[id<<1|1]);
+}
+
+int query(int x, int y, int id = 1, int l = 0, int r = N) {
+    if (x >= r || l >= y) return 0;
+    if (x <= l && r <= y) return t[id];
+
+    shift(id, l, r);
+    int mid = (l + r) / 2;
+    return combine(query(x,y,id<<1,l,mid), query(x,y,id<<1|1,mid,r));
+}
+
 int main() {
 
     return 0;
