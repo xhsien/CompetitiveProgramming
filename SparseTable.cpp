@@ -8,7 +8,7 @@ int A[MAXN], ST[LOGN][MAXN];
 
 void build(int n) {
 
-    int h = (n == 1 ? 1 : ceil(log2(n)));
+    int h = ceil(log2(n)) + 1;
 
     for (int i = 0; i < n; i++) ST[0][i] = A[i];
     for (int i = 1; i < h; i++)
