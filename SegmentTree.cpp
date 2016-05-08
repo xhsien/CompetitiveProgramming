@@ -180,6 +180,57 @@ int query(int x, int y, int id = 1, int l = 0, int r = N) {
     return combine(query(x,y,id<<1,l,mid), query(x,y,id<<1|1,mid,r));
 }
 
+/* --- Recursive Implementation with Persistency --- */
+
+int NEXT_FREE_INDEX = 1;
+
+int N;
+vector<int> v, t, root;
+
+vector<int> L, R;
+
+int combine(int i, int j) {
+    return i + j;
+}
+
+void build(int id = 0, int l = 0, int r = N) {
+    if (r - l < 2) {
+        t[id] = v[l];
+        return;
+    }
+
+    int mid = (l + r) / 2;
+    L[id] = NEXT_FREE_INDEX++;
+    R[id] = NEXT_FREE_INDEX++;
+    build(L[id], l, mid);
+    build(R[id], mid, r);
+    t[id] = combine(t[L[id]], t[R[id]]);
+}
+
+int modify(int p, int val, int id, int l = 0, int r = N) {  // root[i] = modify()
+    int ID = NEXT_FREE_INDEX++;
+    if (r - l < 2) {
+        t[ID] = (v[p] += val);
+        return ID;
+    }
+
+    int mid = (l + r) / 2;
+    L[ID] = L[id], R[ID] = R[id];       // in case not updating L[ID] or R[ID]
+    if (p < mid) 
+        L[ID] = modify(p, val, L[ID], l, mid);
+    else
+        R[ID] = modify(p, val, R[ID], mid, r);
+    return ID;
+}
+
+int query(int x, int y, int id, int l = 0, int r = N) {
+    if (x >= r || l >= y) return 0;
+    if (x <= l && r <= y) return t[id];
+
+    int mid = (l + r) / 2;
+    return combine(query(x, y, L[id], l, mid), query(x, y, R[id], mid, r));
+}
+
 int main() {
 
     return 0;
