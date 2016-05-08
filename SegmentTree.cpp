@@ -92,6 +92,64 @@ public:
     }
 };
 
+/* --- Segment Trees for range increment range gcd query --- */
+
+class InvertedSegmentTree{
+private:
+    int n;
+    vector<int> t;
+public:
+    InvertedSegmentTree() {}
+    InvertedSegmentTree(int _n) {
+        n = _n + 1;
+        t.assign(n << 1, 0);
+    }
+    void modify(int l, int r, int val) {
+        for (l += n, r += n; l < r; l >>= 1, r >>= 1){
+            if (l&1) t[l++] += val;
+            if (r&1) t[--r] += val;
+        }
+    }
+    int compute(int p) {
+        int res = 0;
+        for (p += n; p > 0; p >>=1 ) res += t[p];
+        return res;
+    }
+} st1;
+
+class SegmentTree {
+private:
+    int n;
+    vector<int> t;
+public:
+    SegmentTree() {}
+    SegmentTree(int _n) {
+        n = _n + 1;
+        t.assign(n << 1, 0);
+    }
+    void modify(int p, int val) {
+        for (t[p+=n] = val; p >>= 1; ) t[p] = gcd(t[p<<1],t[p<<1|1]);
+    }
+    int query(int l, int r) {
+        int res = 0;
+        for (l += n, r += n; l < r; l >>= 1, r >>= 1){
+            if (l&1) res = gcd(res,t[l++]);
+            if (r&1) res = gcd(res,t[--r]);
+        }
+        return res;
+    }
+} st2;
+
+void modify(int l, int r, int val) {    // increase a[l..r) by val
+    st1.modify(l, r, val);
+    st2.modify(l,  val);
+    st2.modify(r, -val);
+}
+
+int query(int l, int r) {               // gcd of range [l..r)
+    return gcd(st1.compute(l), st2.query(l+1,r));
+}
+
 /* --- Recursive Implementation --- */
 
 int N;
