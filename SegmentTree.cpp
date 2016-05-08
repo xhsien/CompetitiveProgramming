@@ -115,13 +115,16 @@ void build(int id = 1, int l = 0, int r = N) {
 
 void modify(int p, int val, int id = 1, int l = 0, int r = N) {     // set v[p] = val
     if (r - l < 2) {
-        t[id] = val;
+        t[id] += val;
         return;
     }
 
     int mid = (l + r) / 2;
-    build(id<<1  , l, mid);
-    build(id<<1|1, mid, r);
+    if (p < mid)
+        modify(p, val, id<<1  , l, mid);
+    else
+        modify(p, val, id<<1|1, mid, r);
+    
     t[id] = combine(t[id<<1], t[id<<1|1]);
 }
 
