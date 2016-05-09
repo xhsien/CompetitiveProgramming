@@ -3,6 +3,8 @@ using namespace std;
 
 const int SQRT = 350;
 
+/* --- Mo's Algorithm --- */
+
 struct Query {
     int l, r, id;
 
