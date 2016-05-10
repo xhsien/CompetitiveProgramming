@@ -11,7 +11,7 @@ const int MAXN = 100005;
 const int LOGN = 20;
 
 int H[MAXN];        // index of node i in dfs path
-ii path[MAXN << 1];
+ii path[MAXN<<1];
 vi adjList[MAXN];
 
 ii ST[LOGN][MAXN<<1];
