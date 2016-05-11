@@ -33,7 +33,7 @@ int RMQ(int l, int r) {     // range [l,r)
 }
 
 int cnt = 0;
-void dfs(int node, int depth){
+void dfs(int node = 0, int depth = 0){
     H[node] = cnt;
 
     path[cnt++] = ii(depth,node);
@@ -44,21 +44,22 @@ void dfs(int node, int depth){
     }
 }
 
-int N, M, Q, v;
+int N, Q;
 
 int main(){
 
     scanf("%d",&N);
-    for (int u = 0; u < N; u++){
+    for (int u = 0, M; u < N; u++) {
         scanf("%d",&M);
-        for (int i = 0; i < M; i++){
+        for (int i = 0, v; i < M; i++) {
             scanf("%d",&v);
+            
             adjList[u].push_back(v);
         }
     }
 
     // rooted at 0
-    dfs(0,0);
+    dfs();
     build(cnt);
 
     scanf("%d",&Q);
@@ -78,86 +79,71 @@ int main(){
 #include <bits/stdc++.h>
 using namespace std;
 
-const int MAXN = 1005;
+const int MAXN = 100005;
 
-int TC, N, Q;
-int T[MAXN], L[MAXN], P[MAXN][20];	// direct parent, depth, ancestor
+int N, Q;
+int T[MAXN], L[MAXN], P[MAXN][20];  // direct parent, depth, ancestor
 vector<int> adjList[MAXN];
 
-void dfs(int node, int depth) {
-	L[node] = depth;
-	for (int i = 0; i < adjList[node].size(); i++) {
-		int child = adjList[node][i];
-		dfs(child,depth+1);
-	}
+void dfs(int node = 0, int depth = 0) {
+    L[node] = depth;
+    for (int i = 0; i < adjList[node].size(); i++) {
+        int child = adjList[node][i];
+        dfs(child,depth+1);
+    }
 }
 
 int query(int u, int v) {
-	int tmp;
-	if (L[u] < L[v])
-		tmp = u, u = v, v = tmp;
+    int tmp;
+    if (L[u] < L[v])
+        tmp = u, u = v, v = tmp;
 
-	int LOG2;
-	for (LOG2 = 1; 1 << LOG2 <= L[u]; LOG2++); LOG2--;
+    int LOG2;
+    for (LOG2 = 1; 1 << LOG2 <= L[u]; LOG2++); LOG2--;
 
-	for (int i = LOG2; i >= 0; i--)
-		if (L[u] - (1 << i) >= L[v])
-			u = P[u][i];
+    for (int i = LOG2; i >= 0; i--)
+        if (L[u] - (1 << i) >= L[v])
+            u = P[u][i];
 
-	if (u == v)
-		return u;
+    if (u == v)
+        return u;
 
-	for (int i = LOG2; i >= 0; i--)
-		if (P[u][i] != -1 && P[u][i] != P[v][i])
-			u = P[u][i], v = P[v][i];
+    for (int i = LOG2; i >= 0; i--)
+        if (P[u][i] != -1 && P[u][i] != P[v][i])
+            u = P[u][i], v = P[v][i];
 
-	return T[u];
+    return T[u];
 }
 
 int main() {
 
-	scanf("%d",&TC);
-	for (int t = 1; t <= TC; t++) {
 
-		// init
-		memset(T,0,sizeof(T));
-		memset(L,0,sizeof(L));
-		memset(P,-1,sizeof(P));
-		for (int i = 0; i < 1005; i++)
-			adjList[i].clear();
+    scanf("%d",&N);
+    for (int u = 0, M; u < N; u++) {
+        scanf("%d",&M);
+        for (int i = 0, v; i < M; i++) {
+            scanf("%d",&v);
 
-		scanf("%d",&N);
-		for (int i = 1, num_child; i <= N; i++) {
-			scanf("%d",&num_child);
-			for (int j = 0, child; j < num_child; j++) {
-				scanf("%d",&child);
+            T[v] = u;
+            adjList[u].push_back(v);
+        }
+    }
 
-				T[child] = i;
-				adjList[i].push_back(child);
-			}
-		}
+    // rooted at 0
+    dfs();
 
-		// find root
-		int root;
-		for (int i = 1; i <= N; i++)
-			if (T[i] == 0)
-				root = i;
+    for (int i = 1; i <= N; i++)
+        P[i][0] = T[i];
+    for (int j = 1; 1 << j < N; j++)
+        for (int i = 1; i <= N; i++)
+            if (P[i][j-1] != -1)
+                P[i][j] = P[P[i][j-1]][j-1];
 
-		dfs(root,1);
+    scanf("%d",&Q);
+    for (int i = 0, u, v; i < Q; i++) {
+        scanf("%d%d",&u,&v);
+        printf("%d\n", query(u,v));
+    }
 
-		for (int i = 1; i <= N; i++)
-			P[i][0] = T[i];
-		for (int j = 1; 1 << j < N; j++)
-			for (int i = 1; i <= N; i++)
-				if (P[i][j-1] != -1)
-					P[i][j] = P[P[i][j-1]][j-1];
-
-		scanf("%d",&Q); printf("Case %d:\n", t);
-		for (int i = 0, u, v; i < Q; i++) {
-			scanf("%d%d",&u,&v);
-			printf("%d\n", query(u,v));
-		}
-	}
-
-	return 0;
+    return 0;
 }
