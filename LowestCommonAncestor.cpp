@@ -117,7 +117,6 @@ int query(int u, int v) {
 
 int main() {
 
-
     scanf("%d",&N);
     for (int u = 0, M; u < N; u++) {
         scanf("%d",&M);
