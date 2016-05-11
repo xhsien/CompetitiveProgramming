@@ -1,3 +1,5 @@
+/* --- <O(nlgn),O(1)> --- */
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -69,4 +71,93 @@ int main(){
     }
 
     return 0;
+}
+
+/* --- <O(nlgn),O(lgn)> --- */
+
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 1005;
+
+int TC, N, Q;
+int T[MAXN], L[MAXN], P[MAXN][20];	// direct parent, depth, ancestor
+vector<int> adjList[MAXN];
+
+void dfs(int node, int depth) {
+	L[node] = depth;
+	for (int i = 0; i < adjList[node].size(); i++) {
+		int child = adjList[node][i];
+		dfs(child,depth+1);
+	}
+}
+
+int query(int u, int v) {
+	int tmp;
+	if (L[u] < L[v])
+		tmp = u, u = v, v = tmp;
+
+	int LOG2;
+	for (LOG2 = 1; 1 << LOG2 <= L[u]; LOG2++); LOG2--;
+
+	for (int i = LOG2; i >= 0; i--)
+		if (L[u] - (1 << i) >= L[v])
+			u = P[u][i];
+
+	if (u == v)
+		return u;
+
+	for (int i = LOG2; i >= 0; i--)
+		if (P[u][i] != -1 && P[u][i] != P[v][i])
+			u = P[u][i], v = P[v][i];
+
+	return T[u];
+}
+
+int main() {
+
+	scanf("%d",&TC);
+	for (int t = 1; t <= TC; t++) {
+
+		// init
+		memset(T,0,sizeof(T));
+		memset(L,0,sizeof(L));
+		memset(P,-1,sizeof(P));
+		for (int i = 0; i < 1005; i++)
+			adjList[i].clear();
+
+		scanf("%d",&N);
+		for (int i = 1, num_child; i <= N; i++) {
+			scanf("%d",&num_child);
+			for (int j = 0, child; j < num_child; j++) {
+				scanf("%d",&child);
+
+				T[child] = i;
+				adjList[i].push_back(child);
+			}
+		}
+
+		// find root
+		int root;
+		for (int i = 1; i <= N; i++)
+			if (T[i] == 0)
+				root = i;
+
+		dfs(root,1);
+
+		for (int i = 1; i <= N; i++)
+			P[i][0] = T[i];
+		for (int j = 1; 1 << j < N; j++)
+			for (int i = 1; i <= N; i++)
+				if (P[i][j-1] != -1)
+					P[i][j] = P[P[i][j-1]][j-1];
+
+		scanf("%d",&Q); printf("Case %d:\n", t);
+		for (int i = 0, u, v; i < Q; i++) {
+			scanf("%d%d",&u,&v);
+			printf("%d\n", query(u,v));
+		}
+	}
+
+	return 0;
 }
