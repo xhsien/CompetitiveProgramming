@@ -94,9 +94,8 @@ void dfs(int node = 0, int depth = 0) {
 }
 
 int query(int u, int v) {
-    int tmp;
     if (L[u] < L[v])
-        tmp = u, u = v, v = tmp;
+        swap(u,v);
 
     int LOG2;
     for (LOG2 = 1; 1 << LOG2 <= L[u]; LOG2++); LOG2--;
