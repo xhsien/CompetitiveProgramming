@@ -9,7 +9,7 @@ using namespace std;
  * @return z[i] now stores the longest prefix of str starting from str[i]
  */
 void ZAlgorithm(char str[], int len, int z[]) {
-  for (int i = 0; i < len; i++)
+  for (int i = 0; i <= len; i++)
     z[i] = 0;
 
   int L = 0, R = 1; z[0] = len;
