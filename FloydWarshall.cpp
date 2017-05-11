@@ -1,112 +1,26 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long LL;
-typedef vector<LL> VI;
-typedef vector<VI> VVI;
-
-const LL INF = (1LL << 60);
-
-struct FloydWarshall {
-  int n;
-  VVI adjMat, par;
-
-  FloydWarshall(int _n): n(_n) {
-    adjMat = VVI(n, VI(n, INF));
-    par = VVI(n, VI(n, 0));
-
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        if (i == j)
-          adjMat[i][j] = 0;
-
-        par[i][j] = i;
-      }
-    }
-  }
-
-  void addEdge(int u, int v, LL w) {
-    adjMat[u][v] = min(adjMat[u][v], w);
-  }
-
-  void AllPairShortestPath() {
-    for (int k = 0; k < n; k++) {
-      for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-          if (adjMat[i][k] != INF && adjMat[k][j] != INF && adjMat[i][j] > adjMat[i][k] + adjMat[k][j]) {
-            adjMat[i][j] = adjMat[i][k] + adjMat[k][j];
-            par[i][j] = par[k][j];
-          }
-        }
-      }
-    }
-
-    for (int k = 0; k < n; k++) {
-      for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-          if (adjMat[i][k] != INF && adjMat[k][j] != INF && adjMat[k][k] < 0) {
-            adjMat[i][j] = -INF;
-          }
-        }
-      }
-    }
-  }
-
-  /*
-   *  INF : u cannot reach v
-   * -INF : negative cycle
-   *  Else : shortest distance between u and v
-   */
-  LL distance(int u, int v) {
-    return adjMat[u][v];
-  }
-
-  void path(int u, int v, vector<int>& p) {
-    if (distance(u, v) == INF || distance(u, v) == -INF)
-      return;
-
-    if (u != v) 
-      path(u, par[u][v], p);
-    p.push_back(v);
-  }
-};
+const int MAXN = 100;
+const long long INF = 1e9;
 
 /*
- * This program solves KATTIS ALLPAIRSPATH
+ * @param          n: number of nodes
+ * @param adjMat[][]: adjacency matrix representation of the graph
+ *                    mark adjMat[u][v] to INF if no edge exist between them
+ * 
+ * @return adjMat[u][v]: shortest path between u and v 
+ * @return parent[u][v]: parent of v in shortest path u->v
  */
+void floydWarshall(int n, int adjMat[MAXN][MAXN], int parent[MAXN][MAXN]) {
+  for (int k = 0; k < n; k++) 
+    for (int i = 0; i < n; i++)
+      for (int j = 0; j < n; j++)
+        if (adjMat[i][k] != INF && adjMat[k][j] != INF && adjMat[i][j] > adjMat[i][k] + adjMat[k][j])
+            adjMat[i][j] = adjMat[i][k] + adjMat[k][j], parent[i][j] = parent[k][j];
+}
 
-int main() { 
-
-  int n, m, q;
-  while (scanf("%d%d%d", &n, &m, &q), n || m || q) {
-    
-    FloydWarshall wf(n);
-
-    for (int i = 0; i < m; i++) {
-      int u, v; LL w;
-      scanf("%d%d%Ld", &u, &v, &w);
-
-      wf.addEdge(u, v, w);
-    }
-
-    wf.AllPairShortestPath();
-
-    for (int i = 0; i < q; i++) {
-      int u, v;
-      scanf("%d%d", &u, &v);
-
-      LL ans = wf.distance(u, v);
-
-      if (ans == INF)
-        printf("Impossible\n");
-      else if (ans == -INF)
-        printf("-Infinity\n");
-      else 
-        printf("%Ld\n", ans);
-    }
-
-    printf("\n");
-  }
+int main() {
 
   return 0;
 }

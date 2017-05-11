@@ -30,3 +30,8 @@ void ZAlgorithm(char str[], int len, int z[]) {
     }
   }
 }
+
+int main() {
+
+	return 0;
+}

@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 void countingSort(int len, int ra[], int sa[], vector<int>& tsa, int k) {
